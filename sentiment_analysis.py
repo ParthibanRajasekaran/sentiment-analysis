@@ -10,11 +10,20 @@ import logging
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 
-# Load SpaCy for POS tagging
-nlp = spacy.load("en_core_web_sm")
+# Ensure SpaCy model is loaded
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    logging.info("Downloading SpaCy model 'en_core_web_sm'...")
+    from spacy.cli import download
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
-# Load sentiment analysis pipeline
-sentiment_pipeline = pipeline("sentiment-analysis", framework="pt")
+# Ensure sentiment-analysis framework is loaded
+try:
+    sentiment_pipeline = pipeline("sentiment-analysis", framework="pt")
+except Exception as e:
+    raise ImportError("PyTorch or TensorFlow is required for Hugging Face pipelines. Install with `pip install torch`." + str(e))
 
 def filter_significant_words(feedback_text):
     """
