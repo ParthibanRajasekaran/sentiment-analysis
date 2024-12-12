@@ -1,0 +1,10 @@
+# Virtual Environment
+.venv/
+env/
+
+# System Files
+__pycache__/
+*.py[cod]
+
+# Outputs
+*.png
