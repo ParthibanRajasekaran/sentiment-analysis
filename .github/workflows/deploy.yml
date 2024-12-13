@@ -20,12 +20,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
+          pip install torch
 
       - name: Download SpaCy model
         run: python -m spacy download en_core_web_sm
-
-      - name: Install PyTorch (for sentiment-analysis pipeline)
-        run: pip install torch
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV

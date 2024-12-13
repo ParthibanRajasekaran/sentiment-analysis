@@ -1,11 +1,8 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+import unittest
+from unittest.mock import patch
 from sentiment_analysis import analyze_feedback, preprocess_feedback, gather_feedback
 
 class TestSentimentAnalysis(unittest.TestCase):
-
     def test_preprocess_feedback(self):
         feedback_list = [
             "I am neither satisfied nor dissatisfied with the training sessions.",
@@ -20,7 +17,7 @@ class TestSentimentAnalysis(unittest.TestCase):
         result = preprocess_feedback(feedback_list)
         self.assertEqual(result, expected_output)
 
-    @patch("sentiment_analysis.sentiment_pipeline")
+    @patch("sentiment_analysis.pipeline")
     def test_analyze_feedback(self, mock_pipeline):
         feedback_list = [
             "I had a great opportunity to enhance my skills.",
@@ -28,8 +25,7 @@ class TestSentimentAnalysis(unittest.TestCase):
             "I feel neutral about the skill development initiatives."
         ]
 
-        # Mock the sentiment pipeline predictions
-        mock_pipeline.side_effect = lambda x: [
+        mock_pipeline.return_value = [
             {'label': 'POSITIVE', 'score': 0.95},
             {'label': 'NEGATIVE', 'score': 0.85},
             {'label': 'NEUTRAL', 'score': 0.5}
@@ -37,11 +33,10 @@ class TestSentimentAnalysis(unittest.TestCase):
 
         sentiment_counts, sentiment_percentages, results = analyze_feedback(feedback_list)
 
-        # Assertions
         self.assertEqual(sentiment_counts, {'positive': 1, 'negative': 1, 'neutral': 1})
-        self.assertAlmostEqual(sentiment_percentages['positive'], 33.333, places=2)
-        self.assertAlmostEqual(sentiment_percentages['negative'], 33.333, places=2)
-        self.assertAlmostEqual(sentiment_percentages['neutral'], 33.333, places=2)
+        self.assertAlmostEqual(sentiment_percentages['positive'], 33.33, places=2)
+        self.assertAlmostEqual(sentiment_percentages['negative'], 33.33, places=2)
+        self.assertAlmostEqual(sentiment_percentages['neutral'], 33.33, places=2)
 
     def test_gather_feedback(self):
         feedback_data = {
@@ -57,5 +52,5 @@ class TestSentimentAnalysis(unittest.TestCase):
         result = gather_feedback(feedback_data)
         self.assertEqual(result, expected_output)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
